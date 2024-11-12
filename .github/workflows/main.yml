@@ -8,7 +8,7 @@ env:
 jobs:
   Testing:
     name: Testing code
-    runs-on: ubuntu=latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: checkout source code 
