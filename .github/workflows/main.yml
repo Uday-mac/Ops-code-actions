@@ -36,7 +36,7 @@ jobs:
            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-           -Dsonar.sources=src /
+           -Dsonar.sources=src/
            -Dsonar.java.binaries=target/classes/com/visualpathit/account/controller
            -Dsonar.junit.reportsPath=target/surefire-reports/
            -Dsonar.jacoco.reportPaths=target/jacoco.exec 
