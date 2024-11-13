@@ -1,4 +1,4 @@
-FROM openjdk:11 as base_image
+FROM openjdk:11 as BUILD_IMAGE
 RUN apt update && apt install maven -y
 COPY ./ vproject
 RUN cd vproject && mvn install
