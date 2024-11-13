@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vpro-app
+  namespace: default
+  labels:
+    app: vpro-app
+spec:
+  selector:
+    matchLabels:
+      app: vpro-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: vpro-app
+    spec:
+      # initContainers:
+        # Init containers are exactly like regular containers, except:
+          # - Init containers always run to completion.
+          # - Each init container must complete successfully before the next one starts.
+      containers:
+      - name: vpro-app
+        image:  {{ .Values.appimage}}: {{ .Values.apptag }}
+        ports:
+        - containerPort: 8080
+          name: vpro-app-port
+      
+      initContainers:
+      - name: busybox
+        image: busybox:latest
+        command: ['sh', '-c', "until nslookup vprodb-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for vprodb-service; sleep 2; done"]
+      - name: init-mydb
+        image: busybox:1.28
+        command: ['sh', '-c', "until nslookup vprormq-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for vprormq-service; sleep 2; done"]

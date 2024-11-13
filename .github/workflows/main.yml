@@ -3,6 +3,7 @@ on: workflow_dispatch
 env:
   REGION: us-east-1
   REPO: vprofiile-ops
+  CLUSTER_NAME: vprofile-eks
 
 jobs:
   Testing:
@@ -72,3 +73,39 @@ jobs:
           daemon_off: false
           dockerfile: ./Dockerfile
           context: ./
+  Deploy:
+    name: Pull and deploy
+    runs-on: ubuntu-latest
+    needs: Build 
+
+    steps:
+      - name: checkout source code 
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: get kubeconfi file
+        run: aws eks update-kubeconfig --region env.REGION --name env.CLUSTER_NAME
+       
+      - name: print config
+        run: cat ~/.kube/config
+
+      - name: login into ecr
+        run: kubectl create secret docker-registry regcred --docker-server=${{ secrets.ECR_REPO }} --docker-username=AWS --docker-password=$(aws ecr get-login-password)
+
+      - name: Deploy using helm
+        uses: bitovi/github-actions-deploy-eks-helm@v1.2.12
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: env.REGION
+          cluster-name: env.CLUSTER_NAME
+          chart-path: helm/vprofilecharts
+          namespace: default
+          values: appimage=${{ secrets.ECR_IMAGE_URL}},apptag=${{ github.run_number}}
+          name: vprofile-stack

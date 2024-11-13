@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  vpro-mc
+  labels:
+    app:  vpro-mc
+spec:
+  selector:
+    matchLabels:
+      app: vpro-mc
+  replicas: 1
+    spec:
+      containers:
+      - name:  vpro-mc
+        image:  memcached:latest
+        env:
+        ports:
+        - containerPort: 5672
+          name:  vpro-mc-port
