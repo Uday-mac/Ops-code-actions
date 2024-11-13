@@ -2,7 +2,7 @@ name: vprofile-actions
 on: workflow_dispatch
 env:
   REGION: us-east-1
-  REPO: vprofile-ops
+  REPO: vprofiile-ops
 
 jobs:
   Testing:
