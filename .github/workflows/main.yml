@@ -2,8 +2,6 @@ name: vprofile-actions
 on: workflow_dispatch
 env:
   REGION: us-east-1
-  ECR_URL: ${{ secrets.ECR_REPO }}
-  ECR_IMAGE_URL: ${{ secrets.ECR_IMAGE }}
   REPO: vprofile-ops
 
 jobs:
@@ -67,7 +65,7 @@ jobs:
         with:
           access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          registry: ${{ secrets.ECR_URL }}
+          registry: ${{ secrets.ECR_REPO }}
           repo: ${{ env.REPO }}
           region: ${{ env.REGION }}
           tags: latest, ${{ github.run_number }}
